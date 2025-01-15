@@ -16,7 +16,7 @@ Follow the steps below to set up the environment and install the required depend
 
 First, clone the **NegBench** repository and navigate to the `benchmarks/` folder:
 ```bash
-git clone https://github.com/yourusername/NegBench.git
+git clone https://github.com/m1k2zoo/negbench.git
 cd NegBench/benchmarks/
 ```
 
