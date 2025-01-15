@@ -58,7 +58,7 @@ The fine-tuning datasets are derived from the **CC12M dataset**. The datasets in
 - **CC12M-NegCap**: Captions with incorporated negated objects (~30 million captions).
 - **CC12M-NegMCQ**: Multiple-choice questions with one correct and three hard negative captions (~40 million captions).
 
-These datasets are constructed using the scripts in the `synthetic_datasets/finetuning/` directory. For detailed instructions, refer to [`synthetic_datasets/finetuning/README.md`](../synthetic_datasets/finetuning/README.md).
+These datasets are constructed using the scripts in the `synthetic_datasets/finetuning/` directory. For detailed instructions, refer to [`synthetic_datasets/finetuning/README.md`](synthetic_datasets/finetuning/README.md).
 
 ---
 
