@@ -32,7 +32,7 @@ Each CSV file includes either `image_path` or `filepath` columns. After download
 ### Image Datasets
 
 1. **VOC2007**
-   - Download images from the **[official link](http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar)**.
+   - Download images from the **[official link](http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar)**.
    - Extract the dataset and ensure the file paths in the CSV files point to the correct directory.
 
 2. **COCO 2017 Validation Set**
