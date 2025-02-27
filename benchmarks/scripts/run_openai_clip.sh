@@ -10,7 +10,8 @@ MODEL_NAME="ViT_B_32_openai"
 PRETRAINED_MODEL="openai"
 # If evaluating a pre-trained model that is stored locally, set the path to the model
 # MODEL_NAME="NegCLIP"
-# PRETRAINED_MODEL="/data/healthy-ml/scratch/kumail/projects/cs/negation/open_clip/logs/trained_models/NegCLIP/checkpoints/negclip.pth"
+# MODELS_DIR="PATH_TO_MODELS"
+# PRETRAINED_MODEL="$MODELS_DIR/NegCLIP/negclip.pth"
 
 # Dataset paths for images
 COCO_MCQ="$IMAGE_METADATA_DIR/COCO_val_mcq_llama3.1_rephrased.csv"

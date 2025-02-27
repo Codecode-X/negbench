@@ -1,6 +1,6 @@
-# Vision-Language Models Do Not Understand Negation
+# Vision-Language Models Do *Not* Understand Negation *(CVPR 2025)*
 
-This repository contains the code, datasets, and resources for the paper ***"Vision-Language Models Do Not Understand Negation"*** ([preprint link](https://arxiv.org/abs/2501.09425)) **accepted at CVPR 2025.** The paper explores the limitations of vision-language models (e.g., CLIP, NegCLIP) in understanding negation and presents new evaluation benchmarks and fine-tuning datasets to address these challenges.
+This repository contains the code, datasets, and resources for the paper **"Vision-Language Models Do *Not* Understand Negation"** ([preprint link](https://arxiv.org/abs/2501.09425)) **accepted at CVPR 2025.** The paper explores the limitations of vision-language models (e.g., CLIP, NegCLIP) in understanding negation and presents new evaluation benchmarks and fine-tuning datasets to address these challenges.
 
 This repository is **a work in progress**, and the authors welcome feedback, suggestions, and contributions. Please feel free to open an issue on GitHub or reach out via email.
 

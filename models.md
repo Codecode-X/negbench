@@ -16,17 +16,17 @@ models/
 
 All models in this directory use **ViT-B-32** as the CLIP architecture.
 
-### 1. **ConCLIP** (WACV 2025)  
+### 1. **ConCLIP** (WACV 2025)
 - `conclip_b32_openclip_version.pt`  
 - A contrastively trained CLIP model designed to improve negation understanding.
 - **[Original paper link](https://arxiv.org/abs/2403.20312)**
 
-### 2. **NegCLIP** (ICLR 2023)  
+### 2. **NegCLIP** (ICLR 2023)
 - `negclip.pth`  
 - An improved version of CLIP, fine-tuned for better compositional language understanding.
 - **[Original paper link](https://openreview.net/forum?id=KRLUvxh8uaX)**
 
-### 3. **NegCLIP_CC12M_NegFull**  
+### 3. **NegCLIP_CC12M_NegFull** (CVPR 2025)
 - `finetuned_checkpoint.pt`  
 - A version of NegCLIP that we fine-tuned on the **CC12M-NegFull** dataset, which combines **CC12M-NegCap** and **CC12M-NegMCQ**. This is our best model in terms of negation understanding capabilities. 
 
