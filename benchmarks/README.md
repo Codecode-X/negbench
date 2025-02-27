@@ -56,9 +56,8 @@ NegBench/
 │   └── README.md
 ├── synthetic_datasets/         # Synthetic (evaluation and training) datasets construction
 └── models/                     # Directory for models
-    ├── pretrained/             # Pretrained CLIP models
-    ├── fine_tuned/             # Fine-tuned models
-    └── README.md
+├── datasets.md                 # Instructions for downloading and processing eval data
+├── models.md                   # Instructions for downloading trained models
 ```
 
 ### Data Directory (`data/`)
@@ -95,27 +94,27 @@ For mode details about preparing the datasets for evaluation, refer to [`dataset
 
 ### Models Directory (`models/`)
 
-The `models/` directory should include:
-- **Pretrained Models**: Store standard CLIP models, e.g., OpenAI or LAION models.
-
-Structure:
+The `models/` directory should follow this structure:
 ```
 models/
-├── pretrained/
-│   ├── NegCLIP_B32/
-│   │   └── checkpoints/negclip.pth
-│   ├── ConCLIP_B32/
-│   │   └── checkpoints/conclip_b32_openclip_version.pt
-│   └── ...
+├── ConCLIP/
+│   ├── conclip_b32_openclip_version.pt
+├── NegCLIP/
+│   ├── negclip.pth
+├── NegCLIP_CC12M_NegFull_ViT-B-32_lr1e-8_clw0.99_mlw0.01/
+│   ├── finetuned_checkpoint.pt
 ```
+
+Note that OpenCLIP models can be used directly without downloading.
+For mode details about preparing the models for evaluation, refer to [`models.md`](../models.md).
 
 ---
 
 ## Running Evaluations
 
-### 1. Evaluating a Single Model
+### 1. Evaluating a Single Model (Please start here!)
 
-The script **`run_single_model_evaluations.sh`** facilitates quick testing of new models, such as fine-tuned models discussed in Section 5 of the paper. This script evaluates a single model for retrieval and MCQ tasks.
+The script **`run_single_model_evaluations.sh`** facilitates quick testing of models, including pretrained models like CLIP OpenAI and fine-tuned models like those discussed in Section 5 of the paper. This script evaluates a single model for retrieval and MCQ tasks.
 
 #### User-Defined Variables:
 - **`BASE_DIR`**: Define the base directory in `run_single_model_evaluations.sh`:
@@ -128,21 +127,28 @@ The script **`run_single_model_evaluations.sh`** facilitates quick testing of ne
   ```
 - **`MODEL_NAME`**: Define the model name (used for logs and naming):
   ```bash
-  MODEL_NAME="mcq_third_batch_ViT-B-32_conclip_cc12m_full_lr1e-8_clw0.99_mlw0.01"
+  MODEL_NAME="ViT_B_32_openai"
   ```
-- **`PRETRAINED_MODEL`**: Provide the path to the model checkpoint:
-  ```bash
-  PRETRAINED_MODEL="$MODELS_DIR/$MODEL_NAME/checkpoints/epoch_1.pt"
-  ```
+- **`PRETRAINED_MODEL`**: Specify the pretrained model.  
+  - For OpenCLIP models, provide the **tag name** (e.g., `"openai"`):
+    ```bash
+    PRETRAINED_MODEL="openai"
+    ```
+  - For fine-tuned models, provide the **path to the checkpoint**. For example:
+    ```bash
+    PRETRAINED_MODEL="$MODELS_DIR/NegCLIP/negclip.pth"
+    ```
 
 #### Run Command:
 ```bash
 bash scripts/run_single_model_evaluations.sh
 ```
 
+For more details on OpenCLIP-supported models and pretrained tags, refer to the **[OpenCLIP documentation](https://github.com/mlfoundations/open_clip)**.
+
 ---
 
-### 2. Evaluating Multiple Models
+### 2. Evaluating Multiple Models (Optional: might need more advanced bash scripting experience)
 
 The script **`run_pretrained_model_evaluations.sh`** is used to reproduce most of the results in Section 4 of the paper. It evaluates pretrained models (e.g., OpenAI's CLIP, LAION, or DataComp models) and supports both **main results** and **template results** (figures 3, 4, 5).
 
@@ -171,7 +177,7 @@ bash scripts/run_pretrained_model_evaluations.sh
 
 ---
 
-### 3. Individual Image and Video Evaluations
+### 2.1. Individual Image and Video Evaluations
 
 **`evaluate_images.sh`** and **`evaluate_videos.sh`** are example SLURM scripts that perform the actual evaluation for image and video datasets, respectively. These scripts are called internally by the main script **`run_pretrained_model_evaluations.sh`** but can also be run directly.
 

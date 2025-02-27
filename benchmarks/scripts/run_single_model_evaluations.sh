@@ -2,23 +2,23 @@
 
 # Set the base directory for data and logs. Users should update this to their directory structure.
 BASE_DIR="/path/to/your/research/project"  # Change this to your base directory
-DATA_DIR="$BASE_DIR/data"
+DATA_DIR="path/to/your/data"  # Change this to your data directory
 LOGS_DIR="$BASE_DIR/logs"
-MODELS_DIR="$BASE_DIR/models"
+MODELS_DIR="path/to/your/models"  # Change this to your models directory
 
 # Model and pretrained options
 MODEL="ViT-B-32"
-MODEL_NAME="mcq_third_batch_ViT-B-32_conclip_cc12m_full_lr1e-8_clw0.99_mlw0.01"
-PRETRAINED_MODEL="$MODELS_DIR/$MODEL_NAME/checkpoints/epoch_1.pt"
+MODEL_NAME="NegCLIP"
+PRETRAINED_MODEL="$MODELS_DIR/$MODEL_NAME/name_of_your_model.pt" # Change this to the real path of your model
+# Note: for an openclip model, you can use the following:
+# MODEL_NAME="ViT_B_32_openai"
+# PRETRAINED_MODEL="openai"
 
 # Dataset paths for images
 COCO_MCQ="$DATA_DIR/images/COCO_val_mcq_llama3.1_rephrased.csv"
 VOC_MCQ="$DATA_DIR/images/VOC2007_mcq_llama3.1_rephrased.csv"
-SYNTHETIC_MCQ="$DATA_DIR/images/synthetic_mcq_llama3.1_rephrased.csv"
 COCO_RETRIEVAL="$DATA_DIR/images/COCO_val_retrieval.csv"
 COCO_NEGATED_RETRIEVAL="$DATA_DIR/images/COCO_val_negated_retrieval_llama3.1_rephrased_affneg_true.csv"
-SYNTHETIC_RETRIEVAL="$DATA_DIR/images/synthetic_retrieval_v1.csv"
-SYNTHETIC_NEGATED_RETRIEVAL="$DATA_DIR/images/synthetic_retrieval_v2.csv"
 
 # Dataset paths for videos
 MSRVTT_RETRIEVAL="$DATA_DIR/videos/MSRVTT/msr_vtt_retrieval.csv"
@@ -35,14 +35,16 @@ ulimit -S -n 100000
 RUN_LOGS_DIR="$LOGS_DIR/evaluation"
 mkdir -p "$RUN_LOGS_DIR"
 
+cd ..
+
 # Image Evaluation
 echo "Starting Image Evaluation..."
+# Note: you can add --report-to wandb to report to wandb
 CUDA_VISIBLE_DEVICES=0 python -m src.evaluation.eval_negation \
     --model $MODEL \
     --pretrained $PRETRAINED_MODEL \
     --name "image_$MODEL_NAME" \
     --logs=$RUN_LOGS_DIR \
-    --report-to wandb \
     --dataset-type csv \
     --csv-separator=, \
     --csv-img-key filepath \
@@ -51,22 +53,19 @@ CUDA_VISIBLE_DEVICES=0 python -m src.evaluation.eval_negation \
     --imagenet-val="$DATA_DIR/images/imagenet" \
     --coco-mcq=$COCO_MCQ \
     --voc2007-mcq=$VOC_MCQ \
-    --synthetic-mcq=$SYNTHETIC_MCQ \
     --coco-retrieval=$COCO_RETRIEVAL \
     --coco-negated-retrieval=$COCO_NEGATED_RETRIEVAL \
-    --synthetic-retrieval=$SYNTHETIC_RETRIEVAL \
-    --synthetic-negated-retrieval=$SYNTHETIC_NEGATED_RETRIEVAL \
     --batch-size=64 \
     --workers=8
 
 # Video Evaluation
 echo "Starting Video Evaluation..."
+# Note: you can add --report-to wandb to report to wandb
 CUDA_VISIBLE_DEVICES=0 python -m src.evaluation.eval_negation \
     --model $MODEL \
     --pretrained $PRETRAINED_MODEL \
     --name "video_$MODEL_NAME" \
     --logs=$RUN_LOGS_DIR \
-    --report-to wandb \
     --dataset-type csv \
     --csv-separator=, \
     --csv-img-key filepath \

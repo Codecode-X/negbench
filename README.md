@@ -1,6 +1,6 @@
 # Vision-Language Models Do Not Understand Negation
 
-This repository contains the code, datasets, and resources for the paper **"Vision-Language Models Do Not Understand Negation"** ([preprint link](https://arxiv.org/abs/2501.09425)). The paper explores the limitations of vision-language models (e.g., CLIP, NegCLIP) in understanding negation and presents new evaluation benchmarks and fine-tuning datasets to address these challenges.
+This repository contains the code, datasets, and resources for the paper ***"Vision-Language Models Do Not Understand Negation"*** ([preprint link](https://arxiv.org/abs/2501.09425)) **accepted at CVPR 2025.** The paper explores the limitations of vision-language models (e.g., CLIP, NegCLIP) in understanding negation and presents new evaluation benchmarks and fine-tuning datasets to address these challenges.
 
 This repository is **a work in progress**, and the authors welcome feedback, suggestions, and contributions. Please feel free to open an issue on GitHub or reach out via email.
 
@@ -25,6 +25,11 @@ Each subdirectory contains its own `README.md` file with detailed instructions o
 
 ### Dataset Preparation
 For detailed instructions on downloading and preparing datasets (e.g., CC12M, COCO, VOC2007, MSR-VTT), refer to [`datasets.md`](datasets.md).
+
+---
+
+### Supported Models
+For instructions and links to download some of the evaluated models (e.g., OpenAI CLIP, CoNCLIP, NegCLIP, our finetuned NegCLIP), refer to [`models.md`](models.md).
 
 ---
 
