@@ -1,6 +1,7 @@
 import logging
 
 import torch
+import torch.nn.functional as F
 from tqdm import tqdm
 
 from open_clip import get_input_dtype, get_tokenizer
@@ -73,8 +74,8 @@ def evaluate_model(model, dataloader, args, tokenizer=None, is_synthetic=False):
             # Flatten tokens for encoding
             captions_tokens = torch.cat(captions_tokens).to(args.device)
 
-            image_features = model.encode_image(image_tensor)
-            text_features = model.encode_text(captions_tokens)
+            image_features = F.normalize(model.encode_image(image_tensor), dim=-1)
+            text_features = F.normalize(model.encode_text(captions_tokens), dim=-1)
 
             # Reshape text features back
             text_features = text_features.view(num_options, batch_size, -1)
@@ -174,8 +175,8 @@ def evaluate_binary_mcq_model(model, dataloader, args, tokenizer=None):
             captions_tokens = torch.cat(captions_tokens).to(args.device)
 
             # Encode image and text features
-            image_features = model.encode_image(image_tensor)
-            text_features = model.encode_text(captions_tokens)
+            image_features = F.normalize(model.encode_image(image_tensor), dim=-1)
+            text_features = F.normalize(model.encode_text(captions_tokens), dim=-1)
 
             # Reshape text features back to handle two choices
             text_features = text_features.view(2, batch_size, -1)
