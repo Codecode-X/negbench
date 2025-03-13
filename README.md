@@ -2,7 +2,15 @@
 
 This repository contains the code, datasets, and resources for the paper **"Vision-Language Models Do *Not* Understand Negation"** ([preprint link](https://arxiv.org/abs/2501.09425)) **accepted at CVPR 2025.** The paper explores the limitations of vision-language models (e.g., CLIP, NegCLIP) in understanding negation and presents new evaluation benchmarks and fine-tuning datasets to address these challenges.
 
-This repository is **a work in progress**, and the authors welcome feedback, suggestions, and contributions. Please feel free to open an issue on GitHub or reach out via email.
+This repository is **a work in progress**, and the authors welcome feedback, suggestions, and contributions. We are also happy to discuss extensions of our work. Please feel free to open an issue on GitHub or reach out via email.
+
+---
+
+## Updates & Changelog
+
+- **[03/2025]** 🛠 **Bug Fix:** Added feature normalization (L2 normalization of image and text embeddings) before computing the dot product in MCQ evaluations of CLIP-like models. The code now correctly applies normalization. This change affects the numbers in Figure 4 of the preprint, but the overall trends remain consistent. See updated values in [`results/mcq/1_baseline_total.csv`](results/mcq/1_baseline_total.csv) and [`results/mcq/2_scaling_clip_total.csv`](results/mcq/2_scaling_clip_total.csv). Our updated finetuned model numbers are in [`results/mcq/3_finetuned_total.csv`](results/mcq/3_finetuned_total.csv).
+- **[03/2025]** 🎉 **NegBench is accepted to CVPR 2025!**
+- **[01/2025]** 🚀 **Initial Release:** Code to reproduce main retrieval and MCQ results of the preprint is now available.
 
 ---
 
