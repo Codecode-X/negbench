@@ -9,7 +9,9 @@ models/
 ├── NegCLIP/
 │   ├── negclip.pth
 ├── NegCLIP_CC12M_NegFull_ViT-B-32_lr1e-8_clw0.99_mlw0.01/
-│   ├── finetuned_checkpoint.pt
+│   ├── checkpoint.pt
+├── CLIP_CC12M_NegFull_ViT-B-32_lr1e-8_clw0.99_mlw0.01/
+│   ├── checkpoint.pt
 ```
 
 ## Available Models
@@ -27,8 +29,12 @@ All models in this directory use **ViT-B-32** as the CLIP architecture.
 - **[Original paper link](https://openreview.net/forum?id=KRLUvxh8uaX)**
 
 ### 3. **NegCLIP_CC12M_NegFull** (CVPR 2025)
-- `finetuned_checkpoint.pt`  
-- A version of NegCLIP that we fine-tuned on the **CC12M-NegFull** dataset, which combines **CC12M-NegCap** and **CC12M-NegMCQ**. This is our best model in terms of negation understanding capabilities. 
+- `NegCLIP_CC12M_NegFull_ViT-B-32_lr1e-8_clw0.99_mlw0.01`  
+- A version of NegCLIP that we fine-tuned on the **CC12M-NegFull** dataset, which combines **CC12M-NegCap** and **CC12M-NegMCQ**. This is our best model in terms of negation understanding capabilities.
+
+### 4. **CLIP_CC12M_NegFull** (CVPR 2025)
+- `CLIP_CC12M_NegFull_ViT-B-32_lr1e-8_clw0.99_mlw0.01`  
+- A version of CLIP that we intitialized with OpenAI weights and fine-tuned on the **CC12M-NegFull** dataset.
 
 ---
 
