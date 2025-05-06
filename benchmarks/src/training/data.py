@@ -397,6 +397,7 @@ def get_dataset_size(shards):
 
 
 def get_imagenet(args, preprocess_fns, split):
+    print("正在加载ImageNet数据集")
     assert split in ["train", "val", "v2"]
     is_train = split == "train"
     preprocess_train, preprocess_val = preprocess_fns
@@ -414,6 +415,9 @@ def get_imagenet(args, preprocess_fns, split):
         assert data_path
 
         dataset = datasets.ImageFolder(data_path, transform=preprocess_fn)
+        print(f"》》》Total images in dataset: {len(dataset)}")
+        print(f"》》》Classes in dataset: {len(dataset.classes)}")
+
 
     if is_train:
         idxs = np.zeros(len(dataset.targets))
@@ -434,11 +438,12 @@ def get_imagenet(args, preprocess_fns, split):
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=args.batch_size,
+        batch_size=64,
         num_workers=args.workers,
         sampler=sampler,
+        shuffle=False,
     )
-
+    print(f"》》》》ImageNet dataset size: {len(dataloader.dataset)}")
     return DataInfo(dataloader=dataloader, sampler=sampler)
 
 
@@ -1015,20 +1020,20 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
             args, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
         
     # Check if MCQ training data is provided
-    if args.mcq_train_data:
-        data["mcq_train"] = get_dataset_fn(args.mcq_train_data, 'csv_mcq')(
-            args, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
+    # if args.mcq_train_data:
+    #     data["mcq_train"] = get_dataset_fn(args.mcq_train_data, 'csv_mcq')(
+    #         args, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
         
-    if args.train_separate_negated_data:
-        data["train_negated"] = get_separate_negated_dataset(
-            args, args.train_separate_negated_data, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
+    # if args.train_separate_negated_data:
+    #     data["train_negated"] = get_separate_negated_dataset(
+    #         args, args.train_separate_negated_data, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
 
     # if args.val_data:
     #     data["val"] = get_dataset_fn(args.val_data, args.dataset_type)(
     #         args, preprocess_val, is_train=False, tokenizer=tokenizer)
 
-    # if args.imagenet_val is not None:
-    #     data["imagenet-val"] = get_imagenet(args, preprocess_fns, "val")
+    if args.imagenet_val is not None:
+        data["imagenet-val"] = get_imagenet(args, preprocess_fns, "val")
 
     # if args.imagenet_v2 is not None:
     #     data["imagenet-v2"] = get_imagenet(args, preprocess_fns, "v2")
@@ -1039,22 +1044,22 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
     # if args.coco_zeroshot:
     #     data["coco-zeroshot"] = get_eval_dataset(args, args.coco_zeroshot, preprocess_val, 'classification', img_key='filepath', target_key='targets')
 
-    if args.synthetic_mcq:
-        data["synthetic-mcq"] = get_eval_dataset(args, args.synthetic_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
+    # if args.synthetic_mcq:
+    #     data["synthetic-mcq"] = get_eval_dataset(args, args.synthetic_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
     
-    if args.coco_mcq:
-        data["coco-mcq"] = get_eval_dataset(args, args.coco_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
+    # if args.coco_mcq:
+    #     data["coco-mcq"] = get_eval_dataset(args, args.coco_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
 
-    if args.coco_retrieval:
-        data["coco-retrieval"] = get_eval_dataset(args, args.coco_retrieval, preprocess_val, 'retrieval')
+    # if args.coco_retrieval:
+    #     data["coco-retrieval"] = get_eval_dataset(args, args.coco_retrieval, preprocess_val, 'retrieval')
 
-    if args.coco_negated_retrieval:
-        data["coco-negated-retrieval"] = get_eval_dataset(args, args.coco_negated_retrieval, preprocess_val, 'retrieval')
+    # if args.coco_negated_retrieval:
+    #     data["coco-negated-retrieval"] = get_eval_dataset(args, args.coco_negated_retrieval, preprocess_val, 'retrieval')
 
     # if args.voc2007_zeroshot:
     #     data["voc2007-zeroshot"] = get_eval_dataset(args, args.voc2007_zeroshot, preprocess_val, 'classification', img_key='filepath', target_key='targets')
 
-    if args.voc2007_mcq:
-        data["voc2007-mcq"] = get_eval_dataset(args, args.voc2007_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
+    # if args.voc2007_mcq:
+    #     data["voc2007-mcq"] = get_eval_dataset(args, args.voc2007_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
 
     return data
