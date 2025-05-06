@@ -6,16 +6,8 @@ import random
 
 import numpy as np
 import torch
-
-try:
-    import wandb
-except ImportError:
-    wandb = None
-
-try:
-    import torch.utils.tensorboard as tensorboard
-except ImportError:
-    tensorboard = None
+wandb = None
+tensorboard = None
 
 from open_clip import create_model_and_transforms, get_tokenizer, create_model_from_pretrained
 from training.data import get_data
@@ -109,15 +101,6 @@ def main(args):
         except Exception as e:
             logging.error(f"Error loading model: {e}")
             return -1
-    elif "conch" in args.name:
-        try:
-            print("Loading model from pretrained: ConCH")
-            from conch.open_clip_custom import create_model_from_pretrained as create_model_from_pretrained_conch
-            model, preprocess = create_model_from_pretrained_conch('conch_ViT-B-16', "hf_hub:MahmoodLab/conch", device=device, hf_auth_token="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")
-            preprocess_train = preprocess_val = preprocess
-        except Exception as e:
-            logging.error(f"Error loading model: {e}")
-            return -1
     else:
         model, preprocess_train, preprocess_val = create_model_and_transforms(
             args.model,
@@ -158,9 +141,6 @@ def main(args):
         tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
     elif "quiltnet" in args.name:
         tokenizer = get_tokenizer('hf-hub:wisdomik/QuiltNet-B-32')
-    elif "conch" in args.name:
-        from conch.open_clip_custom import get_tokenizer as get_tokenizer_conch
-        tokenizer = get_tokenizer_conch()
     else:
         tokenizer = get_tokenizer(args.model)
     data = get_data(
@@ -169,6 +149,7 @@ def main(args):
         epoch=start_epoch,
         tokenizer=tokenizer,
     )
+    print(f"》》》》Data: {(data)}")
     assert len(data), 'At least one train or eval dataset must be specified.'
     print("data keys:")
     for key in data.keys():
@@ -221,6 +202,8 @@ def main(args):
         if args.video:
             evaluate_video(model, data, start_epoch, args, tb_writer=writer, tokenizer=tokenizer)
         else:
+            print("6666 Evaluating model...")
+            print(f"data: {data}")
             evaluate(model, data, start_epoch, args, tb_writer=writer, tokenizer=tokenizer)
         return
 
