@@ -543,7 +543,6 @@ def get_caltech101(args, preprocess_fns, split):
         preprocess_fns: Preprocessing functions for train/val.
         split: 'train' or 'val' to specify which dataset to load.
     """
-    print(f"正在加载{csv_file}数据集")
     
     assert split in ["train", "val"]
     is_train = split == "train"
@@ -551,6 +550,7 @@ def get_caltech101(args, preprocess_fns, split):
 
     # Path to the CSV file for val/train data
     csv_file = '/root/NP-CLIP/NegBench/data/CLS/cifar100.csv'
+    print(f"正在加载{csv_file}数据集")
 
     # Create dataset using the CSV file
     dataset = CLSCSV(csv_file=csv_file, transform=preprocess_train if is_train else preprocess_val)
@@ -1168,28 +1168,28 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
 
         return data
 
-    if args.cxr_dataset: # TODO: rename to something more intuitive, like args.medical_dataset
-        if args.chexpert_mcq:
-            data["chexpert-mcq"] = get_eval_dataset(args, args.chexpert_mcq, preprocess_val, 'mcq')
+    # if args.cxr_dataset: # TODO: rename to something more intuitive, like args.medical_dataset
+    #     if args.chexpert_mcq:
+    #         data["chexpert-mcq"] = get_eval_dataset(args, args.chexpert_mcq, preprocess_val, 'mcq')
 
-        if args.chexpert_affirmation_mcq:
-            data["chexpert-affirmation-mcq"] = get_eval_dataset(args, args.chexpert_affirmation_mcq, preprocess_val, 'mcq')
+    #     if args.chexpert_affirmation_mcq:
+    #         data["chexpert-affirmation-mcq"] = get_eval_dataset(args, args.chexpert_affirmation_mcq, preprocess_val, 'mcq')
 
-        if args.chexpert_binary_mcq:
-            data["chexpert-binary-mcq"] = get_eval_dataset(args, args.chexpert_binary_mcq, preprocess_val, 'binary_mcq') # TODO
-            data["chexpert-affirmation-binary-mcq"] = get_eval_dataset(args, args.chexpert_affirmation_binary_mcq, preprocess_val, 'binary_mcq')
+    #     if args.chexpert_binary_mcq:
+    #         data["chexpert-binary-mcq"] = get_eval_dataset(args, args.chexpert_binary_mcq, preprocess_val, 'binary_mcq') # TODO
+    #         data["chexpert-affirmation-binary-mcq"] = get_eval_dataset(args, args.chexpert_affirmation_binary_mcq, preprocess_val, 'binary_mcq')
 
-        if args.ham10000_mcq:
-            data["ham10000-mcq"] = get_eval_dataset(args, args.ham10000_mcq, preprocess_val, 'mcq')
+    #     if args.ham10000_mcq:
+    #         data["ham10000-mcq"] = get_eval_dataset(args, args.ham10000_mcq, preprocess_val, 'mcq')
 
-        if args.ham10000_affirmation_mcq:
-            data["ham10000-affirmation-mcq"] = get_eval_dataset(args, args.ham10000_affirmation_mcq, preprocess_val, 'mcq')
+    #     if args.ham10000_affirmation_mcq:
+    #         data["ham10000-affirmation-mcq"] = get_eval_dataset(args, args.ham10000_affirmation_mcq, preprocess_val, 'mcq')
 
-        return data
+    #     return data
 
-    if args.train_data or args.dataset_type == "synthetic":
-        data["train"] = get_dataset_fn(args.train_data, args.dataset_type)(
-            args, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
+    # if args.train_data or args.dataset_type == "synthetic":
+    #     data["train"] = get_dataset_fn(args.train_data, args.dataset_type)(
+    #         args, preprocess_train, is_train=True, epoch=epoch, tokenizer=tokenizer)
         
     # Check if MCQ training data is provided
     # if args.mcq_train_data:
@@ -1210,7 +1210,7 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
         
 
     # if args.imagenet_v2 is not None:
-    #     data["imagenet-v2"] = get_imagenet(args, preprocess_fns, "v2")
+        # data["imagenet-v2"] = get_imagenet(args, preprocess_fns, "v2")
 
     # if args.synthetic_zeroshot:
     #     data["synthetic-zeroshot"] = get_eval_dataset(args, args.synthetic_zeroshot, preprocess_val, 'classification')
@@ -1221,19 +1221,19 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
     # if args.synthetic_mcq:
     #     data["synthetic-mcq"] = get_eval_dataset(args, args.synthetic_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
     
-    # if args.coco_mcq:
-    #     data["coco-mcq"] = get_eval_dataset(args, args.coco_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
+    if args.coco_mcq:
+        data["coco-mcq"] = get_eval_dataset(args, args.coco_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
 
-    # if args.coco_retrieval:
-    #     data["coco-retrieval"] = get_eval_dataset(args, args.coco_retrieval, preprocess_val, 'retrieval')
+    if args.coco_retrieval:
+        data["coco-retrieval"] = get_eval_dataset(args, args.coco_retrieval, preprocess_val, 'retrieval')
 
-    # if args.coco_negated_retrieval:
-    #     data["coco-negated-retrieval"] = get_eval_dataset(args, args.coco_negated_retrieval, preprocess_val, 'retrieval')
+    if args.coco_negated_retrieval:
+        data["coco-negated-retrieval"] = get_eval_dataset(args, args.coco_negated_retrieval, preprocess_val, 'retrieval')
 
     # if args.voc2007_zeroshot:
     #     data["voc2007-zeroshot"] = get_eval_dataset(args, args.voc2007_zeroshot, preprocess_val, 'classification', img_key='filepath', target_key='targets')
 
-    # if args.voc2007_mcq:
-    #     data["voc2007-mcq"] = get_eval_dataset(args, args.voc2007_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
+    if args.voc2007_mcq:
+        data["voc2007-mcq"] = get_eval_dataset(args, args.voc2007_mcq, preprocess_val, 'mcq', img_key='filepath', target_key='targets')
 
     return data
