@@ -445,6 +445,7 @@ class ImageNetCSV(Dataset):
         if self.transform:
             img = self.transform(img)
         return img, label_idx
+    
 
 def get_imagenet(args, preprocess_fns, split):
     """
@@ -486,6 +487,84 @@ def get_imagenet(args, preprocess_fns, split):
         shuffle=False,
     )
 
+    return dataloader
+
+
+class CLSCSV(Dataset):
+    """
+    Custom dataset to load Caltech101 data from a CSV file.
+    Args:
+        csv_file (str): Path to the CSV file containing image paths and labels.
+        transform (callable, optional): Optional transform to be applied on a sample.
+    """
+    def __init__(self, csv_file, transform=None):
+        self.data = pd.read_csv(csv_file)
+        self.image_paths = self.data['image_path'].values
+        self.labels = self.data['label'].values
+        self.transform = transform
+        # Build a mapping from label name to index
+        self.label_map = {label: idx for idx, label in enumerate(sorted(set(self.labels)))}
+
+        # Extract unique class names (this will be your caltech101_classes)
+        self.class_names = sorted(set(self.labels))
+        self.caltech101_classes = [f"photo of a {label}" for label in self.class_names]
+
+        # Save the classes to caltech101_classes.txt
+        self.save_caltech101_classes()
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        img_path = self.image_paths[idx]
+        label = self.labels[idx]
+        # Convert the label to an index
+        label_idx = self.label_map[label]
+        # Open image
+        img = Image.open(img_path).convert('RGB')
+        # Apply any transformations
+        if self.transform:
+            img = self.transform(img)
+        return img, label_idx
+
+    def save_caltech101_classes(self):
+        """Save the classes to a text file."""
+        with open("/root/NP-CLIP/negbench/benchmarks/scripts/classes.txt", "w") as f:
+            for label in self.caltech101_classes:
+                f.write(f"{label}\n")
+        print("Saved caltech101_classes to caltech101_classes.txt")
+
+def get_caltech101(args, preprocess_fns, split):
+    """
+    Return a DataLoader for Caltech101 data based on CSV file.
+    
+    Args:
+        args: Arguments containing paths for CSV and transformations.
+        preprocess_fns: Preprocessing functions for train/val.
+        split: 'train' or 'val' to specify which dataset to load.
+    """
+    print(f"正在加载{csv_file}数据集")
+    
+    assert split in ["train", "val"]
+    is_train = split == "train"
+    preprocess_train, preprocess_val = preprocess_fns
+
+    # Path to the CSV file for val/train data
+    csv_file = '/root/NP-CLIP/NegBench/data/CLS/cifar100.csv'
+
+    # Create dataset using the CSV file
+    dataset = CLSCSV(csv_file=csv_file, transform=preprocess_train if is_train else preprocess_val)
+
+    sampler = None
+    dataloader = DataLoader(
+        dataset,
+        batch_size=64,
+        num_workers=args.workers,
+        sampler=sampler,
+        shuffle=False,
+    )
+
+    # Returning both the dataloader and the caltech101_classes
     return dataloader
 
 
@@ -1126,7 +1205,9 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
     #         args, preprocess_val, is_train=False, tokenizer=tokenizer)
 
     if args.imagenet_val is not None:
-        data["imagenet-val"] = get_imagenet(args, preprocess_fns, "val")
+        # data["imagenet-val"] = get_imagenet(args, preprocess_fns, "val")
+        data["imagenet-val"] = get_caltech101(args, preprocess_fns, "val")
+        
 
     # if args.imagenet_v2 is not None:
     #     data["imagenet-v2"] = get_imagenet(args, preprocess_fns, "v2")

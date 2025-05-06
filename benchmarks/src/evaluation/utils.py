@@ -38,7 +38,8 @@ def eval_imgnet(model, data, epoch, args, tb_writer=None, tokenizer=None):
     device = torch.device(args.device)
     model.eval()
     
-    with open("/root/NP-CLIP/negbench/benchmarks/scripts/imagenet_classes.txt", "r") as f:
+    # with open("/root/NP-CLIP/negbench/benchmarks/scripts/imagenet_classes.txt", "r") as f:
+    with open("/root/NP-CLIP/negbench/benchmarks/scripts/classes.txt", "r") as f:
         class_names = [line.strip() for line in f]
 
     # 使用标准 ImageNet 1000 类标签
