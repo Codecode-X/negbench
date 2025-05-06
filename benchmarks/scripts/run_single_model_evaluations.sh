@@ -6,7 +6,8 @@ cd "$(dirname "$0")" || exit
 # Set PYTHONPATH to benchmarks directory
 export PYTHONPATH=$(cd .. && pwd)
 export PYTHONPATH="$(cd "$(dirname "$0")/.." && pwd)"
-export PYTHONPATH=$PYTHONPATH:/root/ConCLIP/Negbench/negbench/benchmarks/src
+export PYTHONPATH=$PYTHONPATH:/root/NP-CLIP/negbench/benchmarks/src
+
 
 echo "PYTHONPATH set to $PYTHONPATH"
 
@@ -19,7 +20,9 @@ MODELS_DIR="/root/NP-CLIP/XTrainer/~/.cache/clip/"  # 修改为模型目录check
 # Model and pretrained options
 MODEL="ViT-B-32"
 MODEL_NAME="NegCLIP"
-PRETRAINED_MODEL="$MODELS_DIR/ViT-B-32.pt"
+# PRETRAINED_MODEL="$MODELS_DIR/ViT-B-32.pt" # 55.97 tp5:83.27%
+# PRETRAINED_MODEL="$MODELS_DIR/checkpoint.pt" # 51.38%  tp5:81.00%
+PRETRAINED_MODEL="$MODELS_DIR/conclip_b32_openclip_version.pt"
 
 # Dataset paths for images
 COCO_MCQ="$DATA_DIR/images/COCO_val_mcq_llama3.1_rephrased.csv"

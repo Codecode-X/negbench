@@ -396,8 +396,67 @@ def get_dataset_size(shards):
     return total_size, num_shards
 
 
+
+import os
+import torch
+import pandas as pd
+from torchvision import transforms
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
+
+class ImageNetCSV(Dataset):
+    """
+    Custom dataset to load ImageNet data from a CSV file.
+    Args:
+        csv_file (str): Path to the CSV file containing image paths and labels.
+        transform (callable, optional): Optional transform to be applied on a sample.
+    """
+    def __init__(self, csv_file, transform=None):
+        csv_file = '/root/NP-CLIP/NegBench/data/CLS/imagenet_val.csv'
+        self.data = pd.read_csv(csv_file)
+        self.image_paths = self.data['image_path'].values
+        self.labels = self.data['label'].values
+        self.transform = transform
+        # Build a mapping from label name to index
+        self.label_map = {label: idx for idx, label in enumerate(sorted(set(self.labels)))}
+        # Extract unique class names (this will be your imagenet_classes)
+        self.class_names = sorted(set(self.labels))
+        self.imagenet_classes = [f"photo of a {label}" for label in self.class_names]
+        self.save_imagenet_classes()
+
+    def save_imagenet_classes(self):
+        """Save the imagenet_classes to a text file."""
+        with open("/root/NP-CLIP/negbench/benchmarks/scripts/imagenet_classes.txt", "w") as f:
+            for label in self.imagenet_classes:
+                f.write(f"{label}\n")
+        print("Saved imagenet_classes to imagenet_classes.txt")
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        img_path = self.image_paths[idx]
+        label = self.labels[idx]
+        # Convert the label to an index
+        label_idx = self.label_map[label]
+        # Open image
+        img = Image.open(img_path).convert('RGB')
+        # Apply any transformations
+        if self.transform:
+            img = self.transform(img)
+        return img, label_idx
+
 def get_imagenet(args, preprocess_fns, split):
+    """
+    Return a DataLoader for ImageNet data based on CSV file.
+    
+    Args:
+        args: Arguments containing paths for CSV and transformations.
+        preprocess_fns: Preprocessing functions for train/val.
+        split: 'train' or 'val' to specify which dataset to load.
+    """
     print("正在加载ImageNet数据集")
+    
     assert split in ["train", "val", "v2"]
     is_train = split == "train"
     preprocess_train, preprocess_val = preprocess_fns
@@ -412,39 +471,73 @@ def get_imagenet(args, preprocess_fns, split):
         else:
             data_path = args.imagenet_val
             preprocess_fn = preprocess_val
-        assert data_path
+        
+        # Path to the CSV file for val/train data
+        csv_file = os.path.join(data_path, f"{split}_data.csv")
 
-        dataset = datasets.ImageFolder(data_path, transform=preprocess_fn)
-        print(f"》》》Total images in dataset: {len(dataset)}")
-        print(f"》》》Classes in dataset: {len(dataset.classes)}")
+        dataset = ImageNetCSV(csv_file=csv_file, transform=preprocess_fn)
 
-
-    if is_train:
-        idxs = np.zeros(len(dataset.targets))
-        target_array = np.array(dataset.targets)
-        k = 50
-        for c in range(1000):
-            m = target_array == c
-            n = len(idxs[m])
-            arr = np.zeros(n)
-            arr[:k] = 1
-            np.random.shuffle(arr)
-            idxs[m] = arr
-
-        idxs = idxs.astype('int')
-        sampler = SubsetRandomSampler(np.where(idxs)[0])
-    else:
-        sampler = None
-
-    dataloader = torch.utils.data.DataLoader(
+    sampler = None
+    dataloader = DataLoader(
         dataset,
         batch_size=64,
         num_workers=args.workers,
         sampler=sampler,
         shuffle=False,
     )
-    print(f"》》》》ImageNet dataset size: {len(dataloader.dataset)}")
-    return DataInfo(dataloader=dataloader, sampler=sampler)
+
+    return dataloader
+
+
+# def get_imagenet(args, preprocess_fns, split):
+#     print("正在加载ImageNet数据集")
+#     assert split in ["train", "val", "v2"]
+#     is_train = split == "train"
+#     preprocess_train, preprocess_val = preprocess_fns
+
+#     if split == "v2":
+#         from imagenetv2_pytorch import ImageNetV2Dataset
+#         dataset = ImageNetV2Dataset(location=args.imagenet_v2, transform=preprocess_val)
+#     else:
+#         if is_train:
+#             data_path = args.imagenet_train
+#             preprocess_fn = preprocess_train
+#         else:
+#             data_path = args.imagenet_val
+#             preprocess_fn = preprocess_val
+#         assert data_path
+
+#         dataset = datasets.ImageFolder(data_path, transform=preprocess_fn)
+#         print(f"》》》Total images in dataset: {len(dataset)}")
+#         print(f"》》》Classes in dataset: {len(dataset.classes)}")
+
+
+#     if is_train:
+#         idxs = np.zeros(len(dataset.targets))
+#         target_array = np.array(dataset.targets)
+#         k = 50
+#         for c in range(1000):
+#             m = target_array == c
+#             n = len(idxs[m])
+#             arr = np.zeros(n)
+#             arr[:k] = 1
+#             np.random.shuffle(arr)
+#             idxs[m] = arr
+
+#         idxs = idxs.astype('int')
+#         sampler = SubsetRandomSampler(np.where(idxs)[0])
+#     else:
+#         sampler = None
+
+#     dataloader = torch.utils.data.DataLoader(
+#         dataset,
+#         batch_size=64,
+#         num_workers=args.workers,
+#         sampler=sampler,
+#         shuffle=False,
+#     )
+#     print(f"》》》》ImageNet dataset size: {len(dataloader.dataset)}")
+#     return DataInfo(dataloader=dataloader, sampler=sampler)
 
 
 def count_samples(dataloader):

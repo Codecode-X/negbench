@@ -38,7 +38,7 @@ def eval_imgnet(model, data, epoch, args, tb_writer=None, tokenizer=None):
     device = torch.device(args.device)
     model.eval()
     
-    with open("/root/ConCLIP/Negbench/negbench/benchmarks/src/evaluation/imagenet_classes.txt", "r") as f:
+    with open("/root/NP-CLIP/negbench/benchmarks/scripts/imagenet_classes.txt", "r") as f:
         class_names = [line.strip() for line in f]
 
     # 使用标准 ImageNet 1000 类标签
@@ -55,7 +55,9 @@ def eval_imgnet(model, data, epoch, args, tb_writer=None, tokenizer=None):
         correct5 = 0
         total = 0
         from tqdm import tqdm
-        dataloader = data["imagenet-val"].dataloader
+        
+        # dataloader = data["imagenet-val"].dataloader
+        dataloader = data["imagenet-val"]
         
         for images, labels in tqdm(dataloader, desc="Evaluating ImageNet"):
             images = images.to(device)
